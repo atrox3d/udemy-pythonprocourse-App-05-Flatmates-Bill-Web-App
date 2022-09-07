@@ -2,31 +2,48 @@ from flask.views import MethodView
 from wtforms import Form, StringField, SubmitField
 from flask import Flask, render_template, request
 
-app = Flask(__name__)                                   # initialize app
+from flatmates_bill import flat                             # add flatmatesbill's class to the broject
+
+app = Flask(__name__)                                       # initialize app
 
 
-class HomePage(MethodView):                             # logic of the homepage
+class HomePage(MethodView):                                 # logic of the homepage
 
-    def get(self):                                      # http get request
-        return render_template('index.html')            # render templates/index.html
-
-
-class BillFormPage(MethodView):                         # logic of the bill form page
-
-    def get(self):                                      # http get request
-        return render_template('bill_form_page.html',   # render templates/bill_form_page.html
-                               billform=BillForm())     # form object
+    def get(self):                                          # http get request
+        return render_template('index.html')                # render templates/index.html
 
 
-class ResultsPage(MethodView):                          # logic of the results page
+class BillFormPage(MethodView):                             # logic of the bill form page
 
-    def post(self):                                     # http post request
-        billform = BillForm(request.form)               # get form data from request
-        amount = billform.amount.data                   # get amount value from processed form
-        return amount
+    def get(self):                                          # http get request
+        return render_template('bill_form_page.html',       # render templates/bill_form_page.html
+                               billform=BillForm())         # form object
 
 
-class BillForm(Form):                                   # fields of the bill form
+class ResultsPage(MethodView):                              # logic of the results page
+
+    def post(self):                                         # http post request
+        billform = BillForm(request.form)                   # get form data from request
+        amount = billform.amount.data                       # get amount field value from processed form
+        period = billform.period.data                       # get period field value from processed form
+
+        name1 = billform.name1.data                         # get name1 field value from processed form
+        days_in_house1 = billform.days_in_house1.data       # get days_in_house field value from processed form
+
+        name2 = billform.name2.data                         # get name1 field value from processed form
+        days_in_house2 = billform.days_in_house2.data       # get days_in_house field value from processed form
+
+        the_bill = flat.Bill(float(amount), period)         # instantiate Bill
+        flatmate1 = flat.Flatmate(name1,
+                                  float(days_in_house1))    # instantiate Flatmate 1
+        flatmate2 = flat.Flatmate(name2,
+                                  float(days_in_house2))    # instantiate Flatmate 2
+
+        return f'{flatmate1.name} pays ' \
+               f'{flatmate1.pays(the_bill, flatmate2)}'
+
+
+class BillForm(Form):                                       # fields of the bill form
     amount = StringField("Bill amount: ")
     period = StringField("Bill period: ")
 
@@ -39,9 +56,9 @@ class BillForm(Form):                                   # fields of the bill for
     button = SubmitField("Calculate")
 
 
-app.add_url_rule(                                       # adds a route
-    '/',                                                # url path
-    view_func=HomePage.as_view('home_page')             # logic class and internal name
+app.add_url_rule(                                           # adds a route
+    '/',                                                    # url path
+    view_func=HomePage.as_view('home_page')                 # logic class and internal name
 )
 app.add_url_rule(
     '/bill',
@@ -52,8 +69,8 @@ app.add_url_rule(
     view_func=ResultsPage.as_view('results_page')
 )
 
-app.run(                                                # run server
-    debug=True                                          # enable debug, load changes
-    #, host='0.0.0.0'                                   # enable external connections
+app.run(                                                    # run server
+    debug=True                                              # enable debug, load changes
+    #, host='0.0.0.0'                                       # enable external connections
 )
 

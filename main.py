@@ -44,14 +44,14 @@ class ResultsPage(MethodView):                              # logic of the resul
 
 
 class BillForm(Form):                                       # fields of the bill form
-    amount = StringField("Bill amount: ")
-    period = StringField("Bill period: ")
+    amount = StringField("Bill amount: ", default="100")
+    period = StringField("Bill period: ", default="August 2022")
 
-    name1 = StringField("Name: ")
-    days_in_house1 = StringField("Days in the house: ")
+    name1 = StringField("Name: ", default="Fab")
+    days_in_house1 = StringField("Days in the house: ", default=31)
 
-    name2 = StringField("Name: ")
-    days_in_house2 = StringField("Days in the house: ")
+    name2 = StringField("Name: ", default="Rob")
+    days_in_house2 = StringField("Days in the house: ", default="15")
 
     button = SubmitField("Calculate")
 

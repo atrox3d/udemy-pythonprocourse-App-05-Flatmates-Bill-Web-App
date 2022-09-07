@@ -19,6 +19,34 @@ class BillFormPage(MethodView):                             # logic of the bill 
         return render_template('bill_form_page.html',       # render templates/bill_form_page.html
                                billform=BillForm())         # form object
 
+    def post(self):
+        billform = BillForm(request.form)                   # get form data from request
+        amount = billform.amount.data                       # get amount field value from processed form
+        period = billform.period.data                       # get period field value from processed form
+
+        name1 = billform.name1.data                         # get name1 field value from processed form
+        days_in_house1 = billform.days_in_house1.data       # get days_in_house field value from processed form
+
+        name2 = billform.name2.data                         # get name1 field value from processed form
+        days_in_house2 = billform.days_in_house2.data       # get days_in_house field value from processed form
+
+        the_bill = flat.Bill(float(amount), period)         # instantiate Bill
+        flatmate1 = flat.Flatmate(name1,
+                                  float(days_in_house1))    # instantiate Flatmate 1
+        flatmate2 = flat.Flatmate(name2,
+                                  float(days_in_house2))    # instantiate Flatmate 2
+
+        return render_template(
+            'bill_form_page.html',
+            result=True,
+            billform=billform,
+            name1=name1,
+            amount1=flatmate1.pays(the_bill, flatmate2),
+            name2=name2,
+            amount2=flatmate1.pays(the_bill, flatmate1),
+        )
+
+
 
 class ResultsPage(MethodView):                              # logic of the results page
 
@@ -69,10 +97,10 @@ app.add_url_rule(
     '/bill',
     view_func=BillFormPage.as_view('bill_form_page')
 )
-app.add_url_rule(
-    '/results',
-    view_func=ResultsPage.as_view('results_page')
-)
+# app.add_url_rule(
+#     '/results',
+#     view_func=ResultsPage.as_view('results_page')
+# )
 
 app.run(                                                    # run server
     debug=True                                              # enable debug, load changes

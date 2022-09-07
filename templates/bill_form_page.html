@@ -8,7 +8,7 @@
 <body>
     <h2>The Bill Form</h2>
     <p>Fill in the form and click the button to get the results</p>
-    <form action={{url_for('results_page')}} method="post">
+    <form action={{url_for('bill_form_page')}} method="post">
         {{billform.amount.label}} {{billform.amount}}
         <br>
         {{billform.period.label}} {{billform.period}}
@@ -24,6 +24,11 @@
         {{billform.days_in_house2.label}} {{billform.days_in_house2}}
         <br>
         {{billform.button}}
+        <hr>
+        {% if result %}
+            {{name1}} pays {{amount1}} <br>
+            {{name2}} pays {{amount2}} <br>
+        {% endif %}
     </form>
 </body>
 </html>

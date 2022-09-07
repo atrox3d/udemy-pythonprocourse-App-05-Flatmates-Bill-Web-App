@@ -39,8 +39,13 @@ class ResultsPage(MethodView):                              # logic of the resul
         flatmate2 = flat.Flatmate(name2,
                                   float(days_in_house2))    # instantiate Flatmate 2
 
-        return f'{flatmate1.name} pays ' \
-               f'{flatmate1.pays(the_bill, flatmate2)}'
+        return render_template(
+            'results.html',
+            name1=name1,
+            amount1=flatmate1.pays(the_bill, flatmate2),
+            name2=name2,
+            amount2=flatmate1.pays(the_bill, flatmate1),
+        )
 
 
 class BillForm(Form):                                       # fields of the bill form
